@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 class MenuItem {
     String name;
-    double price; 
+    double price;
 
     public MenuItem(String name, double price) {
         this.name = name;
@@ -43,9 +43,8 @@ class BinarySearchTree {
             root.left = insertRec(root.left, item);
         } else if (item.name.compareTo(root.menuItem.name) > 0) {
             root.right = insertRec(root.right, item);
-        }
-        else{
-            System.out.println("This Dish "+"("+item.name +")"+" already in the menu");
+        } else {
+            System.out.println("This Dish " + "(" + item.name + ")" + " already in the menu");
         }
 
         return root;
@@ -63,9 +62,35 @@ class BinarySearchTree {
             inorderRec(root.right);
         }
     }
+
+    // Method to update the price of a food item
+    public void update(String itemName, double newPrice) {
+        TreeNode node = search(root, itemName);
+        if (node != null) {
+            node.menuItem.price = newPrice;
+            System.out.println("Price of " + itemName + " updated to " + newPrice);
+        } else {
+            System.out.println(itemName + " not found in the menu");
+        }
+    }
+
+    // Method to search for a food item in the BST
+    private TreeNode search(TreeNode root, String itemName) {
+        if (root == null || root.menuItem.name.equals(itemName)) {
+            return root;
+        }
+        if (itemName.compareTo(root.menuItem.name) < 0) {
+            return search(root.left, itemName);
+        }
+        return search(root.right, itemName);
+    }
 }
 
 public class RestaurantMenuManagementSystem {
+    // Array to store added food items
+    private static MenuItem[] addedItems = new MenuItem[100];
+    private static int itemCount = 0;
+
     public static void main(String[] args) {
         BinarySearchTree bst = new BinarySearchTree();
         Scanner scanner = new Scanner(System.in);
@@ -80,7 +105,9 @@ public class RestaurantMenuManagementSystem {
             if (inputParts.length == 2) {
                 String name = inputParts[0];
                 double price = Double.parseDouble(inputParts[1]);
-                bst.insert(new MenuItem(name, price));
+                MenuItem newItem = new MenuItem(name, price);
+                bst.insert(newItem);
+                addedItems[itemCount++] = newItem;
             } else {
                 System.out.println("Invalid input. Please enter Dish Name and Price separated by space."
                         + "Ex:- Pizza 890.00 ");
@@ -90,6 +117,15 @@ public class RestaurantMenuManagementSystem {
         // Displaying menu items in alphabetical order with prices
         System.out.println("\nMenu Items in Alphabetical Order:");
         bst.inorder();
+
+        // Prompt user to update a food item
+        System.out.println("\nEnter the name of the dish you want to update:");
+        String itemName = scanner.nextLine();
+        System.out.println("Enter the new price for " + itemName + ":");
+        double newPrice = scanner.nextDouble();
+        bst.update(itemName, newPrice);
+        
+        System.out.println("\nMenu Items in Alphabetical Order:");
+        bst.inorder();
     }
-    
 }
